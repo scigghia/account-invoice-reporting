@@ -39,3 +39,14 @@ class AccountInvoice(models.Model):
             grouped_lines.append(group_no_origin)
         return grouped_lines
 
+
+class AccountInvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    @api.multi
+    def get_move(self):
+        self.ensure_one()
+        move = self.env['stock.move'].search(
+            [('id', 'in', [i.id for i in self.move_line_ids])])
+        return move
+
